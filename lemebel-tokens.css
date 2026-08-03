@@ -1,0 +1,159 @@
+/*
+ * LEMEBEL — núcleo compartilhado de tokens e componentes de UI (client-side)
+ * ---------------------------------------------------------------------------
+ * Extraído em 03/08/2026 do CSS do Consultoria (era, dos 3 produtos, o mais
+ * consistente — já usava var(--radius-*)/var(--shadow-*) direto, sem valores
+ * mágicos duplicados como Gestão tinha acumulado).
+ *
+ * O QUE ENTRA AQUI: tudo que é igual nas 3 verticais — escala de fonte,
+ * radius, sombra, e os componentes atômicos (botão, card, badge, modal,
+ * input, tabela, login). Isso é o "mesmo sistema" que o CLAUDE.md da
+ * plataforma pede.
+ *
+ * O QUE NÃO ENTRA AQUI: a paleta de cor (--accent/--dark/--gold/--cream/...)
+ * — cada produto define a própria no :root do seu index.html, e o
+ * tenant-branding-core.js sobrescreve em runtime por tenant. Layout
+ * específico de produto (sidebar, kanban, calendário, stepper de auditoria
+ * etc.) também fica no arquivo do produto.
+ *
+ * CONTRATO: qualquer produto que carregar este arquivo PRECISA já ter
+ * definido no próprio :root, antes deste <link>, as variáveis de paleta:
+ * --accent, --accent2, --dark, --gold, --soft, --cream, --bg, --surface,
+ * --text, --gray, --line, --ok, --warn, --bad (e opcionalmente --on-accent,
+ * que o tenant-branding-core.js já deriva automaticamente).
+ *
+ * Consumido hoje por: lemebel-consultoria. Ver PENDENCIAS.md do projeto
+ * pra migração de gestao/lemebel-qualidade/lemebel-painel/lemebel-site.
+ */
+
+/* ===== Tokens estruturais (tipografia, radius, sombra) ===== */
+:root{
+  --font-display:'Calistoga',Georgia,serif;
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  --font-wordmark:'Space Grotesk',system-ui,sans-serif;
+  --fs-xs:.72rem;--fs-sm:.82rem;--fs-md:.9rem;--fs-base:1rem;--fs-lg:1.15rem;--fs-xl:1.4rem;--fs-2xl:1.75rem;--fs-3xl:2.2rem;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:22px;--radius-pill:999px;
+  --shadow-xs:0 1px 2px rgba(20,20,24,.05);
+  --shadow-sm:0 1px 2px rgba(20,20,24,.05),0 2px 6px rgba(20,20,24,.04);
+  --shadow-md:0 4px 12px rgba(20,20,24,.06),0 2px 4px rgba(20,20,24,.04);
+  --shadow-lg:0 10px 26px rgba(20,20,24,.09);
+  --shadow-xl:0 24px 60px rgba(20,20,24,.14);
+}
+
+/* ===== Reset e base ===== */
+*{box-sizing:border-box}
+::selection{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+body{margin:0;font-family:var(--font-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.005em}
+header.top h2,h3.sec,.modal .hd,.login .brand-nm{font-family:var(--font-display);font-weight:400;letter-spacing:normal;line-height:1.18}
+h3.sec{margin:0 0 14px;font-size:1.05rem;font-weight:400;letter-spacing:-.01em}
+.muted{color:var(--gray);font-size:.85rem}
+.row{display:flex;gap:8px;align-items:center}
+
+/* ===== Card ===== */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-sm);transition:transform .18s ease,box-shadow .18s ease;animation:cardIn .42s cubic-bezier(.22,.61,.36,1) backwards}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+
+/* ===== Tabela ===== */
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;color:var(--gray);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;padding:10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:var(--cream)}
+
+/* ===== Botão ===== */
+.btn{background:var(--accent);color:var(--on-accent,#fff);border:none;border-radius:var(--radius-md);padding:9px 16px;font-weight:600;cursor:pointer;font-size:.85rem;transition:background .15s,box-shadow .15s,transform .05s;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.btn:hover{background:var(--accent2);box-shadow:var(--shadow-md)}
+.btn:active{transform:translateY(1px)}
+.btn::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg);transition:left .55s ease}
+.btn:hover::after{left:140%}
+.btn.ic{padding:8px;line-height:0;display:inline-flex;align-items:center;justify-content:center;overflow:visible}
+.btn.ic::after{display:none}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px var(--soft)}
+.btn.sec{background:var(--surface);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.sec:hover{background:var(--cream);border-color:var(--line);color:var(--accent)}
+.btn.danger{background:var(--bad)}
+.btn.danger:hover{background:#b91c1c}
+.btn-sm{padding:4px 10px;font-size:.72rem}
+
+/* ===== Formulário ===== */
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-md);font-size:.86rem;font-family:inherit;background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+label{font-size:.75rem;color:var(--gray);display:block;margin:10px 0 5px;font-weight:500}
+
+/* ===== Badge / pill ===== */
+.badge{padding:3px 9px;border-radius:7px;font-size:.7rem;font-weight:600;letter-spacing:.2px}
+.b-ok{background:#e8f6ec;color:#15803d}
+.b-warn{background:#fdf3d3;color:#9a6700}
+.b-bad{background:#fce8e8;color:#b42121}
+.b-gray{background:#eef2f3;color:#5b6b70}
+.b-blue{background:#e5eef4;color:#2e5471}
+.pill{display:inline-block;padding:2px 10px;border-radius:var(--radius-pill);font-size:.68rem;font-weight:700;background:var(--soft);color:var(--accent)}
+
+/* ===== Modal ===== */
+.modal{position:fixed;inset:0;background:rgba(15,20,22,.5);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal .box{background:var(--surface);border-radius:var(--radius-xl);max-width:620px;width:100%;max-height:92vh;overflow:auto;box-shadow:var(--shadow-xl)}
+.modal .hd{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);font-weight:400;font-size:1.1rem}
+.modal .bd{padding:18px}
+.x{cursor:pointer;color:#aaa;font-size:1.2rem;border:none;background:none;transition:color .15s}
+.x:hover{color:var(--accent)}
+@media(max-width:640px){
+  .modal{padding:0;align-items:flex-end}
+  .modal .box{max-width:100%;border-radius:18px 18px 0 0;max-height:94vh}
+}
+
+/* ===== Toast ===== */
+.toast{position:fixed;top:18px;right:18px;color:#fff;padding:13px 20px;border-radius:12px;font-weight:600;z-index:99;box-shadow:0 10px 34px rgba(0,0,0,.18);animation:toastIn .3s cubic-bezier(.22,.61,.36,1)}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#CBD9DB;border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#B4C6C9}
+
+/* ===== Spinner / indicador "ao vivo" ===== */
+.spinner{width:26px;height:26px;border:2.5px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:18px auto}
+.livedot{width:8px;height:8px;border-radius:50%;background:var(--ok);position:relative;display:inline-block;flex-shrink:0}
+.livedot::after{content:'';position:absolute;inset:0;border-radius:50%;background:var(--ok);animation:ping 1.9s cubic-bezier(0,0,.2,1) infinite}
+
+/* ===== Header — friso animado ===== */
+header.top::after{content:'';position:absolute;left:0;bottom:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--accent),var(--gold),var(--accent),transparent);background-size:200% 100%;animation:lineSlide 4.5s linear infinite;opacity:.75}
+
+/* ===== Fundo — aurora suave ===== */
+body::before{content:'';position:fixed;top:-22%;right:-12%;width:56vw;height:56vw;pointer-events:none;z-index:0;background:radial-gradient(circle at center,color-mix(in srgb,var(--accent) 10%,transparent),transparent 62%);filter:blur(42px);animation:auroraMove 18s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52vw;pointer-events:none;z-index:0;background:radial-gradient(circle at center,color-mix(in srgb,var(--gold) 9%,transparent),transparent 62%);filter:blur(52px);animation:auroraMove 23s ease-in-out infinite alternate-reverse}
+
+@keyframes auroraMove{0%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,4%) scale(1.18)}100%{transform:translate(-2%,-3%) scale(1)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes ping{0%{transform:scale(1);opacity:.55}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+@keyframes lineSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ===== Login (split-screen, padrão único da plataforma — ver CLAUDE.md item 6) ===== */
+.login{position:fixed;inset:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:radial-gradient(1100px 640px at 15% -10%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 60%),radial-gradient(900px 600px at 110% 110%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 60%),var(--bg)}
+.login .box{position:relative;z-index:1;width:100%;max-width:390px;padding:38px 34px 26px;border-radius:var(--radius-xl);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-xl);color:var(--text);animation:cardIn .6s cubic-bezier(.22,.61,.36,1) backwards}
+.login .brand{text-align:center;margin-bottom:26px;background:var(--accent);border-radius:var(--radius-lg);padding:26px 18px 20px}
+.login .brand .mk{width:52px;height:52px;color:#fff;margin:0 auto}
+.login .brand-nm{color:var(--on-accent,#fff);font-family:var(--font-wordmark);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:22px;margin:12px 0 3px}
+.login .brand .sub{margin-top:2px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--on-accent,#fff);opacity:.82;font-weight:600}
+.login label{display:block;font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--gray);margin:0 0 6px}
+.login .fld{margin-bottom:16px}
+.login input{background:var(--bg);border:1px solid var(--line);color:var(--text);height:48px;border-radius:13px}
+.login input:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 4px var(--soft)}
+.login .go{width:100%;height:50px;margin-top:6px;border:0;border-radius:13px;cursor:pointer;color:var(--on-accent,#fff);font-weight:700;font-size:.95rem;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 40%,transparent);transition:transform .12s,filter .2s}
+.login .go:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.login .lnk{display:block;text-align:center;margin-top:16px;font-size:.8rem;color:var(--gray);cursor:pointer;transition:color .15s}
+.login .lnk:hover{color:var(--accent)}
+.login .err{color:var(--bad);font-size:.8rem;margin:0 0 10px;display:none}
+.orb-selo{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;color:var(--gray);transition:color .18s}
+.orb-selo:hover{color:var(--text)}
+.orb-selo .os-mk{display:block;width:20px;height:20px;opacity:.9;flex-shrink:0}
+.orb-selo .os-nm{font-size:15px;font-weight:600;letter-spacing:.01em;font-family:var(--font-wordmark)}
+.login .orb-selo{margin:24px 0 0;padding-top:17px;border-top:1px solid var(--line);width:100%}
+@media(min-width:900px){
+  .login{display:block;padding:0}
+  .login .box{margin:0 0 0 45%!important;width:55%!important;max-width:none!important;min-height:100vh;border-radius:0!important;box-shadow:none!important;background:var(--surface);display:flex;flex-direction:column;justify-content:center;padding:0 6vw!important}
+  .login .box>form,.login .box>.orb-selo,.login .box>.lnk{width:100%;max-width:380px;margin-left:auto;margin-right:auto}
+  .login .brand{position:fixed;left:0;top:0;bottom:0;width:45%;margin:0;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+  .login .brand .mk{width:80px;height:80px}
+  .login .brand-nm{font-size:28px}
+}
