@@ -212,14 +212,27 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   color:rgba(255,255,255,.72);
   border-top:1px solid rgba(255,255,255,.07);
   border-radius:0;
-  padding:12px 16px;
+  padding:11px 12px;
+  gap:10px;
 }
 .lemebel-badge--sidebar:hover{
   color:#fff;
   background:rgba(255,255,255,.06);
 }
 .lemebel-badge--sidebar .lemebel-badge__icon{
+  width:46px;height:46px;
   opacity:.9;
+  display:block;
+}
+.lemebel-badge--sidebar .lemebel-badge__wordmark{
+  font-family:var(--font-wordmark,'Space Grotesk',system-ui,sans-serif);
+  font-weight:700;
+  font-size:.86rem;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
 }
 
 /* Versão light (fundo claro — login, cards) */
