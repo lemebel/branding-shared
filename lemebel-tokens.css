@@ -157,3 +157,93 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   .login .brand .mk{width:80px;height:80px}
   .login .brand-nm{font-size:28px}
 }
+
+/* ===== Badge "Powered by Lemebel" — rodapé de sidebar e login ===== */
+/*
+ * Use .lemebel-badge--sidebar para fundos escuros (sidebars coloridas).
+ * Use .lemebel-badge--light   para fundos claros (tela de login, cards).
+ *
+ * Estrutura HTML esperada:
+ *   <a class="lemebel-badge lemebel-badge--sidebar" href="https://lemebel.com.br"
+ *      target="_blank" rel="noopener noreferrer" title="Plataforma Lemebel">
+ *     <svg class="lemebel-badge__icon" ...><!-- símbolo Lemebel --></svg>
+ *     <span class="lemebel-badge__wordmark">LEMEBEL</span>
+ *   </a>
+ *
+ * Tamanhos: padrão ~130px largura; sobe para 150px em telas ≥ 900px.
+ */
+.lemebel-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  border-radius:var(--radius-md);
+  padding:8px 10px;
+  transition:background .18s,opacity .18s;
+  width:100%;
+  box-sizing:border-box;
+}
+.lemebel-badge__icon{
+  width:26px;height:26px;
+  flex-shrink:0;
+  display:block;
+}
+.lemebel-badge__wordmark{
+  font-family:var(--font-wordmark,'Space Grotesk',system-ui,sans-serif);
+  font-weight:700;
+  letter-spacing:.1em;
+  font-size:.9rem;
+  text-transform:uppercase;
+  line-height:1;
+}
+.lemebel-badge__sub{
+  display:block;
+  font-size:.58rem;
+  letter-spacing:.08em;
+  font-weight:500;
+  text-transform:uppercase;
+  margin-top:2px;
+  opacity:.7;
+  line-height:1;
+}
+
+/* Versão sidebar (fundo escuro) */
+.lemebel-badge--sidebar{
+  color:rgba(255,255,255,.72);
+  border-top:1px solid rgba(255,255,255,.07);
+  border-radius:0;
+  padding:12px 16px;
+}
+.lemebel-badge--sidebar:hover{
+  color:#fff;
+  background:rgba(255,255,255,.06);
+}
+.lemebel-badge--sidebar .lemebel-badge__icon{
+  opacity:.9;
+}
+
+/* Versão light (fundo claro — login, cards) */
+.lemebel-badge--light{
+  color:var(--gray,#6b7280);
+  border-top:1px solid var(--line,#e5e7eb);
+  border-radius:0;
+  padding:14px 0 4px;
+  justify-content:center;
+}
+.lemebel-badge--light:hover{
+  color:var(--text,#111);
+}
+.lemebel-badge--light .lemebel-badge__icon{
+  width:20px;height:20px;
+}
+.lemebel-badge--light .lemebel-badge__wordmark{
+  font-size:.82rem;
+  letter-spacing:.06em;
+}
+
+/* Rodapé da sidebar: wrapper de usuário + badge */
+.sidebar-footer,.side-footer{
+  margin-top:auto;
+  padding-bottom:0;
+}
+
