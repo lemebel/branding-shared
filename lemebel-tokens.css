@@ -214,7 +214,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 
 .login .go, #loginModal .login .go {
   width: 100% !important;
-  height: 50px !important;
+  height: 48px !important;
   margin-top: 6px !important;
   border: 0 !important;
   border-radius: 13px !important;
