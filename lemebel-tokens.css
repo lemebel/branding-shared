@@ -129,17 +129,19 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 @keyframes lineSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* ===== Login (split-screen, padrão único da plataforma — ver CLAUDE.md item 6) ===== */
-.login, #loginModal .login {
+/* ===== Login (split-screen, padrão único da plataforma — ver CLAUDE.md item 6) ===== */
+.login, #loginModal, #loginModal .login {
   position: fixed !important;
   inset: 0 !important;
   min-height: 100vh !important;
   height: 100vh !important;
+  width: 100vw !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 20px !important;
   overflow: hidden !important;
-  background: radial-gradient(1100px 640px at 15% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%), radial-gradient(900px 600px at 110% 110%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%), var(--bg, #F9F7F2) !important;
+  background: radial-gradient(1100px 640px at 15% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%), radial-gradient(900px 600px at 110% 110%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%), #F9F7F2 !important;
   z-index: 999999 !important;
   box-sizing: border-box !important;
 }
@@ -151,10 +153,10 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   max-width: 390px !important;
   padding: 38px 34px 26px !important;
   border-radius: 22px !important;
-  background: var(--surface, #ffffff) !important;
-  border: 1px solid var(--line, #EFE3CC) !important;
+  background: #ffffff !important;
+  border: 1px solid #EFE3CC !important;
   box-shadow: 0 24px 60px rgba(20, 20, 24, .14) !important;
-  color: var(--text, #1A140F) !important;
+  color: #1A140F !important;
   box-sizing: border-box !important;
 }
 
@@ -180,10 +182,10 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   font-size: .74rem !important;
   font-weight: 600 !important;
   letter-spacing: .04em !important;
-  color: var(--gray, #7A6A5B) !important;
+  color: #7A6A5B !important;
   margin: 0 0 6px !important;
   text-transform: none !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 .login .fld, #loginModal .login .fld {
@@ -192,21 +194,21 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 
 .login input, #loginModal .login input {
   background: #f4f5f7 !important;
-  border: 1px solid var(--line, #EFE3CC) !important;
-  color: var(--text, #1A140F) !important;
+  border: 1px solid #EFE3CC !important;
+  color: #1A140F !important;
   height: 48px !important;
   border-radius: 13px !important;
   padding: 0 14px !important;
   font-size: .92rem !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 .login input:focus, #loginModal .login input:focus {
   border-color: var(--accent) !important;
   background: #ffffff !important;
-  box-shadow: 0 0 0 4px var(--soft, rgba(140, 3, 39, .07)) !important;
+  box-shadow: 0 0 0 4px rgba(140, 3, 39, .07) !important;
   outline: none !important;
 }
 
@@ -223,7 +225,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
   box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 40%, transparent) !important;
   transition: transform .12s, filter .2s !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 .login .go:hover, #loginModal .login .go:hover {
@@ -236,11 +238,11 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   text-align: center !important;
   margin-top: 16px !important;
   font-size: .8rem !important;
-  color: var(--gray, #7A6A5B) !important;
+  color: #7A6A5B !important;
   cursor: pointer !important;
   transition: color .15s !important;
   text-decoration: none !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 .login .lnk:hover, #loginModal .login .lnk:hover {
@@ -248,7 +250,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 }
 
 .login .err, #loginModal .login .err {
-  color: var(--bad, #dc2626) !important;
+  color: #dc2626 !important;
   font-size: .8rem !important;
   margin: 0 0 10px !important;
   display: none;
@@ -260,17 +262,17 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   justify-content: center !important;
   gap: 10px !important;
   text-decoration: none !important;
-  color: var(--gray, #7A6A5B) !important;
+  color: #7A6A5B !important;
   transition: color .18s !important;
   margin: 28px 0 0 !important;
   padding-top: 20px !important;
-  border-top: 1px solid var(--line, #EFE3CC) !important;
+  border-top: 1px solid #EFE3CC !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
 .orb-selo:hover, .login .orb-selo:hover, #loginModal .login .orb-selo:hover {
-  color: var(--text, #1A140F) !important;
+  color: #1A140F !important;
 }
 
 .orb-selo .os-mk, .login .orb-selo .os-mk, #loginModal .login .orb-selo .os-mk {
@@ -310,7 +312,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 }
 
 @media(min-width:900px){
-  .login, #loginModal .login {
+  .login, #loginModal, #loginModal .login {
     display: block !important;
     padding: 0 !important;
   }
@@ -322,7 +324,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
     height: 100vh !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    background: var(--surface, #ffffff) !important;
+    background: #ffffff !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
