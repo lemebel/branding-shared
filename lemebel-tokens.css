@@ -292,7 +292,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 
 .orb-selo .lsb-wm, .login .orb-selo .lsb-wm, #loginModal .login .orb-selo .lsb-wm {
   font-family: 'Space Grotesk', system-ui, sans-serif !important;
-  font-size: 32px !important;
+  font-size: 1.15rem !important;
   font-weight: 700 !important;
   letter-spacing: .11em !important;
   text-transform: uppercase !important;
@@ -303,7 +303,7 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 
 .orb-selo .lsb-product, .login .orb-selo .lsb-product, #loginModal .login .orb-selo .lsb-product {
   font-family: 'Space Grotesk', system-ui, sans-serif !important;
-  font-size: 32px !important;
+  font-size: 1.15rem !important;
   font-weight: 600 !important;
   letter-spacing: .09em !important;
   text-transform: uppercase !important;
