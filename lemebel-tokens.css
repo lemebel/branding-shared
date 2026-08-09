@@ -129,36 +129,236 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 @keyframes lineSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* ===== Login (split-screen, padrão único da plataforma — ver CLAUDE.md item 6) ===== */
-.login{position:fixed;inset:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:radial-gradient(1100px 640px at 15% -10%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 60%),radial-gradient(900px 600px at 110% 110%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 60%),var(--bg)}
-.login .box{position:relative;z-index:1;width:100%;max-width:390px;padding:38px 34px 26px;border-radius:var(--radius-xl);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-xl);color:var(--text);animation:cardIn .6s cubic-bezier(.22,.61,.36,1) backwards}
-.login .brand{text-align:center;margin-bottom:26px;background:var(--accent);border-radius:var(--radius-lg);padding:26px 18px 20px}
-.login .brand .mk,.login .brand img,.login .brand svg{width:220px;max-width:78%;height:auto;display:block;margin:0 auto}
-.login .brand-nm{color:var(--on-accent,#fff);font-family:var(--font-wordmark);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:22px;margin:12px 0 3px}
-.login .brand .sub{margin-top:2px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--on-accent,#fff);opacity:.82;font-weight:600}
-.login label{display:block;font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--gray);margin:0 0 6px}
-.login .fld{margin-bottom:16px}
-.login input{background:var(--bg);border:1px solid var(--line);color:var(--text);height:48px;border-radius:13px;padding:0 14px;font-size:.92rem;width:100%}
-.login input:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 4px var(--soft)}
-.login .go{width:100%;height:50px;margin-top:6px;border:0;border-radius:13px;cursor:pointer;color:var(--on-accent,#fff);font-weight:700;font-size:.95rem;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 40%,transparent);transition:transform .12s,filter .2s}
-.login .go:hover{transform:translateY(-1px);filter:brightness(1.06)}
-.login .lnk{display:block;text-align:center;margin-top:16px;font-size:.8rem;color:var(--gray);cursor:pointer;transition:color .15s;text-decoration:none}
-.login .lnk:hover{color:var(--accent)}
-.login .err{color:var(--bad);font-size:.8rem;margin:0 0 10px;display:none}
-.orb-selo{display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;color:var(--gray);transition:color .18s}
-.orb-selo:hover{color:var(--text)}
-.orb-selo .os-mk{display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0}
-.orb-selo .os-mk svg{width:32px;height:32px;display:block}
-.orb-selo .lsb-wm{font-family:'Space Grotesk',system-ui,sans-serif;font-size:32px !important;font-weight:700;letter-spacing:.11em;text-transform:uppercase;line-height:1;display:inline-flex;align-items:center}
-.orb-selo .lsb-product{font-family:'Space Grotesk',system-ui,sans-serif;font-size:32px !important;font-weight:600;letter-spacing:.09em;text-transform:uppercase;opacity:.55;margin-left:6px}
-.login .orb-selo{margin:28px 0 0;padding-top:20px;border-top:1px solid var(--line);width:100%;gap:10px}
-.login .orb-selo:hover{color:var(--text)}
-.login .orb-selo .os-mk{width:32px;height:32px}
+.login, #loginModal .login {
+  position: fixed !important;
+  inset: 0 !important;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  overflow: hidden !important;
+  background: radial-gradient(1100px 640px at 15% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%), radial-gradient(900px 600px at 110% 110%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%), var(--bg, #F9F7F2) !important;
+  z-index: 999999 !important;
+  box-sizing: border-box !important;
+}
+
+.login .box, #loginModal .login .box {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  max-width: 390px !important;
+  padding: 38px 34px 26px !important;
+  border-radius: 22px !important;
+  background: var(--surface, #ffffff) !important;
+  border: 1px solid var(--line, #EFE3CC) !important;
+  box-shadow: 0 24px 60px rgba(20, 20, 24, .14) !important;
+  color: var(--text, #1A140F) !important;
+  box-sizing: border-box !important;
+}
+
+.login .brand, #loginModal .login .brand {
+  text-align: center !important;
+  margin-bottom: 26px !important;
+  background: var(--accent) !important;
+  border-radius: 16px !important;
+  padding: 26px 18px 20px !important;
+  box-sizing: border-box !important;
+}
+
+.login .brand .mk, .login .brand img, .login .brand svg, #loginModal .login .brand svg, #loginModal .login .brand img {
+  width: 220px !important;
+  max-width: 78% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.login label, #loginModal .login label {
+  display: block !important;
+  font-size: .74rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .04em !important;
+  color: var(--gray, #7A6A5B) !important;
+  margin: 0 0 6px !important;
+  text-transform: none !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.login .fld, #loginModal .login .fld {
+  margin-bottom: 16px !important;
+}
+
+.login input, #loginModal .login input {
+  background: #f4f5f7 !important;
+  border: 1px solid var(--line, #EFE3CC) !important;
+  color: var(--text, #1A140F) !important;
+  height: 48px !important;
+  border-radius: 13px !important;
+  padding: 0 14px !important;
+  font-size: .92rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.login input:focus, #loginModal .login input:focus {
+  border-color: var(--accent) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px var(--soft, rgba(140, 3, 39, .07)) !important;
+  outline: none !important;
+}
+
+.login .go, #loginModal .login .go {
+  width: 100% !important;
+  height: 50px !important;
+  margin-top: 6px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  cursor: pointer !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: .95rem !important;
+  background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 40%, transparent) !important;
+  transition: transform .12s, filter .2s !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.login .go:hover, #loginModal .login .go:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.06) !important;
+}
+
+.login .lnk, #loginModal .login .lnk {
+  display: block !important;
+  text-align: center !important;
+  margin-top: 16px !important;
+  font-size: .8rem !important;
+  color: var(--gray, #7A6A5B) !important;
+  cursor: pointer !important;
+  transition: color .15s !important;
+  text-decoration: none !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.login .lnk:hover, #loginModal .login .lnk:hover {
+  color: var(--accent) !important;
+}
+
+.login .err, #loginModal .login .err {
+  color: var(--bad, #dc2626) !important;
+  font-size: .8rem !important;
+  margin: 0 0 10px !important;
+  display: none;
+}
+
+.orb-selo, .login .orb-selo, #loginModal .login .orb-selo {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+  color: var(--gray, #7A6A5B) !important;
+  transition: color .18s !important;
+  margin: 28px 0 0 !important;
+  padding-top: 20px !important;
+  border-top: 1px solid var(--line, #EFE3CC) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.orb-selo:hover, .login .orb-selo:hover, #loginModal .login .orb-selo:hover {
+  color: var(--text, #1A140F) !important;
+}
+
+.orb-selo .os-mk, .login .orb-selo .os-mk, #loginModal .login .orb-selo .os-mk {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  flex-shrink: 0 !important;
+}
+
+.orb-selo .os-mk svg, .login .orb-selo .os-mk svg, #loginModal .login .orb-selo .os-mk svg {
+  width: 32px !important;
+  height: 32px !important;
+  display: block !important;
+}
+
+.orb-selo .lsb-wm, .login .orb-selo .lsb-wm, #loginModal .login .orb-selo .lsb-wm {
+  font-family: 'Space Grotesk', system-ui, sans-serif !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  letter-spacing: .11em !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.orb-selo .lsb-product, .login .orb-selo .lsb-product, #loginModal .login .orb-selo .lsb-product {
+  font-family: 'Space Grotesk', system-ui, sans-serif !important;
+  font-size: 32px !important;
+  font-weight: 600 !important;
+  letter-spacing: .09em !important;
+  text-transform: uppercase !important;
+  opacity: .55 !important;
+  margin-left: 6px !important;
+}
+
 @media(min-width:900px){
-  .login{display:block;padding:0}
-  .login .box{margin:0 0 0 45%!important;width:55%!important;max-width:none!important;min-height:100vh;border-radius:0!important;box-shadow:none!important;background:var(--surface);display:flex;flex-direction:column;justify-content:center;padding:0 6vw!important}
-  .login .box>form,.login .box>.orb-selo,.login .box>.lnk,.login .box>#loginPanel,.login .box>#signupPanel{width:100%;max-width:380px;margin-left:auto;margin-right:auto}
-  .login .brand{position:fixed;left:0;top:0;bottom:0;width:45%;margin:0;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
-  .login .brand .mk,.login .brand img,.login .brand svg{width:220px;max-width:78%;height:auto;display:block;margin:0 auto}
+  .login, #loginModal .login {
+    display: block !important;
+    padding: 0 !important;
+  }
+  .login .box, #loginModal .login .box {
+    margin: 0 0 0 45% !important;
+    width: 55% !important;
+    max-width: none !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: var(--surface, #ffffff) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    padding: 0 6vw !important;
+    box-sizing: border-box !important;
+  }
+  .login .box>form, .login .box>.orb-selo, .login .box>.lnk, .login .box>#loginPanel, .login .box>#signupPanel,
+  #loginModal .login .box>form, #loginModal .login .box>.orb-selo, #loginModal .login .box>.lnk, #loginModal .login .box>#loginPanel, #loginModal .login .box>#signupPanel {
+    width: 100% !important;
+    max-width: 380px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .login .brand, #loginModal .login .brand {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    width: 45% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px !important;
+    box-sizing: border-box !important;
+  }
+  .login .brand .mk, .login .brand img, .login .brand svg, #loginModal .login .brand svg, #loginModal .login .brand img {
+    width: 220px !important;
+    max-width: 78% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
 }
 
 /* ===== Badge "Powered by Lemebel" — rodapé de sidebar e login ===== */
