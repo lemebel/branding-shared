@@ -323,8 +323,9 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
     min-height: 100vh !important;
     height: 100vh !important;
     border-radius: 0 !important;
+    border: none !important;
     box-shadow: none !important;
-    background: #ffffff !important;
+    background: var(--surface, #ffffff) !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -347,6 +348,8 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
     width: calc(45% + 1px) !important;
     margin: 0 !important;
     border-radius: 0 !important;
+    border: none !important;
+    outline: none !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
