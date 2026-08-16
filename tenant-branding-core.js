@@ -99,7 +99,23 @@
       por();
     }
 
+    // Tenta o endpoint público da erp-api primeiro (mesmo padrão do gestao/tenant-branding.js
+    // — não fala mais direto com o Supabase na maioria das vezes); só cai pro PostgREST
+    // direto se a erp-api estiver fora do ar, como rede de segurança.
+    var ERP_API = 'https://erp-api-qouq.onrender.com';
     function buscarNoBanco(s) {
+      return fetch(ERP_API + '/api/v1/tenant-config?slug=' + encodeURIComponent(s), { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (res) {
+          if (res && res.ok && res.tenant && res.tenant.id && res.tenant.slug === s) {
+            var t = res.tenant;
+            return { id: t.id, slug: t.slug, nome: t.nome, cores: t.branding.cores, logo_url: t.branding.logo_url, icone_url: t.branding.icone_url, bloqueado: !!t.bloqueado };
+          }
+          return buscarNoBancoDireto(s);
+        })
+        .catch(function () { return buscarNoBancoDireto(s); });
+    }
+    function buscarNoBancoDireto(s) {
       var url = SB_URL + '/rest/v1/empresas?select=id,slug,nome,cores,logo_url,icone_url,bloqueado&limit=1';
       return fetch(url, {
         cache: 'no-store',
