@@ -76,7 +76,11 @@ tbody tr:hover td{background:var(--cream)}
 .btn-sm{padding:4px 10px;font-size:.72rem}
 
 /* ===== Formulário ===== */
-input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-md);font-size:.86rem;font-family:inherit;background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s}
+/* min-width:0 evita o "chao invisivel" do flexbox: sem isso, um input/select dentro de uma
+   barra de filtros (flex-wrap) se recusa a encolher abaixo do seu tamanho de conteudo padrao
+   do navegador mesmo com max-width definido, e o wrap vira imprevisivel dependendo de fonte/
+   largura de janela em vez de obedecer ao CSS. */
+input,select,textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-md);font-size:.86rem;font-family:inherit;background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
 label{font-size:.75rem;color:var(--gray);display:block;margin:10px 0 5px;font-weight:500}
 
