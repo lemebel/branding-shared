@@ -43,6 +43,18 @@
     aplicar(PADRAO);
     global.EMPRESA = Object.assign({ slug: slug || null }, PADRAO);
 
+    // Promessa que a tela (index.html do produto) espera antes de tirar a cortina
+    // de carregamento: sem slug não há marca de tenant pra sobrepor (resolve na
+    // hora); com slug, espera o 'empresa-carregada' (marca real já aplicada) —
+    // com teto de 1.2s pra nunca travar se a rede cair.
+    global.LEMEBEL_MARCA_PRONTA = !slug ? Promise.resolve() : new Promise(function (res) {
+      document.addEventListener('empresa-carregada', function once() {
+        document.removeEventListener('empresa-carregada', once);
+        res();
+      }, { once: true });
+      setTimeout(res, 1200);
+    });
+
     // 2) se há empresa identificada, busca a marca real dela e sobrepõe
     if (slug) {
       buscarNoBanco(slug).then(function (e) {
