@@ -34,8 +34,6 @@
   'use strict';
 
   function iniciar(config) {
-    var SB_URL = config.sbUrl;
-    var SB_KEY = config.sbKey;
     var PADRAO = config.padrao;
     var slug = detectarSlug();
 
@@ -111,9 +109,11 @@
       por();
     }
 
-    // Tenta o endpoint público da erp-api primeiro (mesmo padrão do gestao/tenant-branding.js
-    // — não fala mais direto com o Supabase na maioria das vezes); só cai pro PostgREST
-    // direto se a erp-api estiver fora do ar, como rede de segurança.
+    // Marca do tenant vem SÓ do endpoint público da erp-api (/api/v1/tenant-config).
+    // O fallback direto ao PostgREST do Supabase foi removido no D-5 (desacoplamento —
+    // ver PENDENCIAS.md): nenhum código client-side fala mais direto com supabase.co.
+    // Se a erp-api estiver fora do ar, o branding fica na identidade oficial da
+    // vertente (paleta padrão) — degradação aceitável, sem tela quebrada.
     var ERP_API = 'https://erp-api-qouq.onrender.com';
     function buscarNoBanco(s) {
       return fetch(ERP_API + '/api/v1/tenant-config?slug=' + encodeURIComponent(s), { cache: 'no-store' })
@@ -123,22 +123,9 @@
             var t = res.tenant;
             return { id: t.id, slug: t.slug, nome: t.nome, cores: t.branding.cores, logo_url: t.branding.logo_url, icone_url: t.branding.icone_url, bloqueado: !!t.bloqueado };
           }
-          return buscarNoBancoDireto(s);
+          return null;
         })
-        .catch(function () { return buscarNoBancoDireto(s); });
-    }
-    function buscarNoBancoDireto(s) {
-      var url = SB_URL + '/rest/v1/empresas?select=id,slug,nome,cores,logo_url,icone_url,bloqueado&limit=1';
-      return fetch(url, {
-        cache: 'no-store',
-        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'x-empresa': s }
-      }).then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (j) {
-          var e = j && j[0];
-          if (!e) return null;
-          if (e.slug && e.slug !== s) return null;
-          return e;
-        });
+        .catch(function () { return null; });
     }
 
     function aplicar(m) {
