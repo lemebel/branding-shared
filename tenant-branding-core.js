@@ -115,17 +115,34 @@
     // Se a erp-api estiver fora do ar, o branding fica na identidade oficial da
     // vertente (paleta padrão) — degradação aceitável, sem tela quebrada.
     var ERP_API = 'https://erp-api-qouq.onrender.com';
+    // Achado 27/08/2026 (relato de cliente na Gestão, mesma causa aqui): o erp-api
+    // no Render hiberna e leva 30-50s pra acordar depois de ficar ocioso. Sem
+    // timeout nem retentativa, uma janela ociosa faz essa busca falhar (ou demorar
+    // demais) e a marca real do tenant nunca é reaplicada — fica na identidade
+    // padrão da vertente até um F5 pegar o serviço já acordado. Agora tenta 2x
+    // (janela total ~26s, dentro do pior caso documentado de cold start).
+    function _tentarBuscar(url, timeoutMs) {
+      var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      var timer = ctrl && setTimeout(function () { ctrl.abort(); }, timeoutMs);
+      return fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined }).then(function (r) {
+        if (timer) clearTimeout(timer);
+        return r.ok ? r.json() : Promise.reject(new Error('http ' + r.status));
+      }).catch(function (e) {
+        if (timer) clearTimeout(timer);
+        throw e;
+      });
+    }
     function buscarNoBanco(s) {
-      return fetch(ERP_API + '/api/v1/tenant-config?slug=' + encodeURIComponent(s), { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (res) {
-          if (res && res.ok && res.tenant && res.tenant.id && res.tenant.slug === s) {
-            var t = res.tenant;
-            return { id: t.id, slug: t.slug, nome: t.nome, cores: t.branding.cores, logo_url: t.branding.logo_url, icone_url: t.branding.icone_url, bloqueado: !!t.bloqueado };
-          }
-          return null;
-        })
-        .catch(function () { return null; });
+      var url = ERP_API + '/api/v1/tenant-config?slug=' + encodeURIComponent(s);
+      return _tentarBuscar(url, 6000).catch(function () {
+        return _tentarBuscar(url, 20000);
+      }).then(function (res) {
+        if (res && res.ok && res.tenant && res.tenant.id && res.tenant.slug === s) {
+          var t = res.tenant;
+          return { id: t.id, slug: t.slug, nome: t.nome, cores: t.branding.cores, logo_url: t.branding.logo_url, icone_url: t.branding.icone_url, bloqueado: !!t.bloqueado };
+        }
+        return null;
+      }).catch(function () { return null; });
     }
 
     function aplicar(m) {
