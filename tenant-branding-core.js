@@ -152,17 +152,22 @@
         var icone = m.icone || PADRAO.icone;
         var tipo = /\.svg($|\?)/i.test(icone) ? 'image/svg+xml' : 'image/png';
         var cores = m.cores || {};
+        // O manifest é servido como blob: — start_url/scope/icons relativos resolvem
+        // contra a URL do blob (inválida) e o browser os ignora ("URL is invalid").
+        // Absolutiza tudo contra a origem real da página.
+        var origem = location.origin + '/';
+        var iconeAbs = /^(https?:|data:)/i.test(icone) ? icone : (location.origin + '/' + String(icone).replace(/^\//, ''));
         var manifesto = {
           name: m.nome + config.tituloSufixo,
           short_name: m.nome,
           description: config.manifestDescricao(m.nome),
-          start_url: '/', scope: '/', display: 'standalone', orientation: 'portrait',
+          start_url: origem, scope: origem, id: origem, display: 'standalone', orientation: 'portrait',
           background_color: cores.dark || m.temaBarra || PADRAO.temaBarra,
           theme_color: m.temaBarra || cores.accent || PADRAO.cores.accent,
           lang: 'pt-BR',
           icons: [
-            { src: icone, sizes: '192x192', type: tipo, purpose: 'any' },
-            { src: icone, sizes: '512x512', type: tipo, purpose: 'any maskable' }
+            { src: iconeAbs, sizes: '192x192', type: tipo, purpose: 'any' },
+            { src: iconeAbs, sizes: '512x512', type: tipo, purpose: 'any maskable' }
           ]
         };
         var blob = new Blob([JSON.stringify(manifesto)], { type: 'application/manifest+json' });
