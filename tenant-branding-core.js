@@ -73,13 +73,22 @@
     if (slug) {
       buscarNoBanco(slug).then(aplicarConfigReal).catch(function () { /* fica com a identidade oficial da vertente */ });
 
-      // Rede de segurança contra qualquer causa de "a cor volta a ser a de
-      // reserva depois de um tempo" que a correção de timeout/retentativa acima
-      // não cubra (achado 27/08/2026, mesmo relato na Gestão): reconfere a marca
-      // real a cada 3 minutos, em silêncio. Idempotente se já estiver certa.
-      setInterval(function () {
+      // Rede de segurança (achado 27/08/2026, mesmo mecanismo do tenant-branding.js
+      // da Gestão) — sem bater no servidor à toa com aba parada/minimizada. O
+      // gatilho é "a aba voltou a ficar visível" (throttle de 60s), que é
+      // justamente quando uma sessão esquecida aberta por muito tempo mais
+      // precisaria reconferir; um intervalo de 20min cobre a aba que nunca perde
+      // o foco. Reaplicar a marca já certa é idempotente, não muda nada visível.
+      var _ultimaReconferencia = Date.now();
+      function _reconferirSeVisivel() {
+        if (document.hidden) return;
+        var agora = Date.now();
+        if (agora - _ultimaReconferencia < 60000) return;
+        _ultimaReconferencia = agora;
         buscarNoBanco(slug).then(aplicarConfigReal).catch(function () {});
-      }, 3 * 60 * 1000);
+      }
+      document.addEventListener('visibilitychange', _reconferirSeVisivel);
+      setInterval(_reconferirSeVisivel, 20 * 60 * 1000);
     }
 
     function detectarSlug() {
