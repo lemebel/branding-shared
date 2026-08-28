@@ -54,23 +54,32 @@
     });
 
     // 2) se há empresa identificada, busca a marca real dela e sobrepõe
+    function aplicarConfigReal(e) {
+      if (!e) return;
+      var cores = e.cores && Object.keys(e.cores).length ? e.cores : PADRAO.cores;
+      var marca = {
+        nome: e.nome || PADRAO.nome,
+        cores: cores,
+        logo: e.logo_url || PADRAO.logo,
+        icone: e.icone_url || e.logo_url || PADRAO.icone,
+        manifest: PADRAO.manifest,
+        temaBarra: (cores && cores.dark) || PADRAO.temaBarra
+      };
+      aplicar(marca);
+      global.EMPRESA = Object.assign({ slug: slug, id: e.id, bloqueado: !!e.bloqueado }, marca);
+      document.dispatchEvent(new CustomEvent('empresa-carregada', { detail: global.EMPRESA }));
+      if (e.bloqueado) avisoSuspenso(marca.nome);
+    }
     if (slug) {
-      buscarNoBanco(slug).then(function (e) {
-        if (!e) return;
-        var cores = e.cores && Object.keys(e.cores).length ? e.cores : PADRAO.cores;
-        var marca = {
-          nome: e.nome || PADRAO.nome,
-          cores: cores,
-          logo: e.logo_url || PADRAO.logo,
-          icone: e.icone_url || e.logo_url || PADRAO.icone,
-          manifest: PADRAO.manifest,
-          temaBarra: (cores && cores.dark) || PADRAO.temaBarra
-        };
-        aplicar(marca);
-        global.EMPRESA = Object.assign({ slug: slug, id: e.id, bloqueado: !!e.bloqueado }, marca);
-        document.dispatchEvent(new CustomEvent('empresa-carregada', { detail: global.EMPRESA }));
-        if (e.bloqueado) avisoSuspenso(marca.nome);
-      }).catch(function () { /* fica com a identidade oficial da vertente */ });
+      buscarNoBanco(slug).then(aplicarConfigReal).catch(function () { /* fica com a identidade oficial da vertente */ });
+
+      // Rede de segurança contra qualquer causa de "a cor volta a ser a de
+      // reserva depois de um tempo" que a correção de timeout/retentativa acima
+      // não cubra (achado 27/08/2026, mesmo relato na Gestão): reconfere a marca
+      // real a cada 3 minutos, em silêncio. Idempotente se já estiver certa.
+      setInterval(function () {
+        buscarNoBanco(slug).then(aplicarConfigReal).catch(function () {});
+      }, 3 * 60 * 1000);
     }
 
     function detectarSlug() {
