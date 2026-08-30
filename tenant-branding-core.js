@@ -37,15 +37,39 @@
     var PADRAO = config.padrao;
     var slug = detectarSlug();
 
-    // 1) pinta já com a identidade oficial da vertente (evita piscar)
-    aplicar(PADRAO);
-    global.EMPRESA = Object.assign({ slug: slug || null }, PADRAO);
+    // Marca real da ÚLTIMA visita, cacheada por slug no navegador. Pinta a marca
+    // CERTA do tenant já no 1º paint (em vez da identidade genérica da vertente),
+    // inclusive quando o erp-api está hibernando (Render cold start 30-50s) e
+    // buscarNoBanco() estoura o timeout. Mesmo fix do gestao/tenant-branding.js
+    // (bug relatado pelo dono 30/08/2026). O fetch ao erp-api segue por trás e
+    // sobrepõe/atualiza este cache (marca alterada se autocorrige na visita
+    // seguinte). Identidade padrão da vertente só na 1ª visita de sempre.
+    var MARCA_CACHE_KEY = slug ? 'lemebel_marca_' + slug : null;
+    var marcaCache = null;
+    if (MARCA_CACHE_KEY) {
+      try {
+        var _mc = JSON.parse(localStorage.getItem(MARCA_CACHE_KEY) || 'null');
+        if (_mc && _mc.cores && Object.keys(_mc.cores).length) marcaCache = _mc;
+      } catch (e) {}
+    }
+    var base = marcaCache ? {
+      nome: marcaCache.nome || PADRAO.nome,
+      cores: marcaCache.cores,
+      logo: marcaCache.logo_url || PADRAO.logo,
+      icone: marcaCache.icone_url || marcaCache.logo_url || PADRAO.icone,
+      manifest: PADRAO.manifest,
+      temaBarra: marcaCache.cores.dark || PADRAO.temaBarra
+    } : PADRAO;
+
+    // 1) pinta já com a identidade oficial da vertente OU a marca cacheada
+    aplicar(base);
+    global.EMPRESA = Object.assign({ slug: slug || null }, base);
 
     // Promessa que a tela (index.html do produto) espera antes de tirar a cortina
-    // de carregamento: sem slug não há marca de tenant pra sobrepor (resolve na
-    // hora); com slug, espera o 'empresa-carregada' (marca real já aplicada) —
-    // com teto de 1.2s pra nunca travar se a rede cair.
-    global.LEMEBEL_MARCA_PRONTA = !slug ? Promise.resolve() : new Promise(function (res) {
+    // de carregamento: sem slug (ou com marca cacheada) resolve na hora; com slug
+    // e sem cache, espera o 'empresa-carregada' (marca real já aplicada) — com
+    // teto de 1.2s pra nunca travar se a rede cair.
+    global.LEMEBEL_MARCA_PRONTA = (!slug || marcaCache) ? Promise.resolve() : new Promise(function (res) {
       document.addEventListener('empresa-carregada', function once() {
         document.removeEventListener('empresa-carregada', once);
         res();
@@ -56,17 +80,27 @@
     // 2) se há empresa identificada, busca a marca real dela e sobrepõe
     function aplicarConfigReal(e) {
       if (!e) return;
-      var cores = e.cores && Object.keys(e.cores).length ? e.cores : PADRAO.cores;
+      var cores = e.cores && Object.keys(e.cores).length ? e.cores : base.cores;
       var marca = {
-        nome: e.nome || PADRAO.nome,
+        nome: e.nome || base.nome,
         cores: cores,
-        logo: e.logo_url || PADRAO.logo,
-        icone: e.icone_url || e.logo_url || PADRAO.icone,
-        manifest: PADRAO.manifest,
-        temaBarra: (cores && cores.dark) || PADRAO.temaBarra
+        logo: e.logo_url || base.logo,
+        icone: e.icone_url || e.logo_url || base.icone,
+        manifest: base.manifest,
+        temaBarra: (cores && cores.dark) || base.temaBarra
       };
       aplicar(marca);
       global.EMPRESA = Object.assign({ slug: slug, id: e.id, bloqueado: !!e.bloqueado }, marca);
+      // guarda a marca real pra próxima visita pintar certo no 1º paint (mesmo
+      // com o erp-api dormindo). Só branding — nada de config.
+      if (MARCA_CACHE_KEY && e.cores && Object.keys(e.cores).length) {
+        try {
+          localStorage.setItem(MARCA_CACHE_KEY, JSON.stringify({
+            nome: e.nome || null, cores: e.cores,
+            logo_url: e.logo_url || null, icone_url: e.icone_url || null
+          }));
+        } catch (_e) {}
+      }
       document.dispatchEvent(new CustomEvent('empresa-carregada', { detail: global.EMPRESA }));
       if (e.bloqueado) avisoSuspenso(marca.nome);
     }
