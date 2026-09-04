@@ -43,6 +43,51 @@
 /* ===== Reset e base ===== */
 *{box-sizing:border-box}
 ::selection{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+
+/* ===== Acessibilidade — foco visível único da plataforma (A11Y-02, auditoria 03/09/2026) =====
+   Antes: componentes faziam `outline:none` + anel `box-shadow` com --soft (~7% de opacidade),
+   contraste < 1,1:1 = foco invisível por teclado. Regra base forte, aplicada a tudo que é
+   focável. `:focus-visible` só aparece em navegação por teclado, não no clique de mouse.
+   NÃO reintroduzir `outline:none` sem uma substituição com contraste >= 3:1. */
+:where(a,button,input,select,textarea,summary,[tabindex],[contenteditable="true"],.btn,.x,.nav-item):focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:var(--radius-sm);
+}
+/* fundo escuro (sidebars): o --accent do produto pode ter baixo contraste sobre a cor da
+   sidebar; um anel branco por baixo garante os 3:1 nos dois lados. */
+.dark :focus-visible,[data-sidebar] :focus-visible,.lemebel-badge:focus-visible{
+  outline-color:#fff;
+  box-shadow:0 0 0 4px rgba(0,0,0,.35);
+}
+
+/* Link "pular para o conteúdo" (A11Y-07) — 1º focável do <body>; visível só ao receber foco. */
+.lemebel-skip{
+  position:fixed;top:8px;left:8px;z-index:1000000;
+  background:var(--surface);color:var(--text);
+  border:2px solid var(--accent);border-radius:var(--radius-sm);
+  padding:10px 16px;font-weight:600;font-size:.9rem;text-decoration:none;
+  transform:translateY(-160%);transition:transform .15s;
+}
+.lemebel-skip:focus{transform:translateY(0)}
+
+/* Só para leitor de tela (rótulos de tabela, textos de apoio, "obrigatório"). */
+.sr-only{
+  position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* Respeita "reduzir movimento" do sistema — vale para TODO produto que carrega este núcleo
+   (A11Y-13: Consultoria/Painel não tinham nada; a aurora e o friso do header animavam em
+   loop infinito, violando WCAG 2.2.2 nível A). A Gestão já tinha regra local equivalente. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+    scroll-behavior:auto!important;
+  }
+}
 body{margin:0;font-family:var(--font-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.005em}
 header.top h2,h3.sec,.modal .hd,.login .brand-nm{font-family:var(--font-display);font-weight:400;letter-spacing:normal;line-height:1.18}
 h3.sec{margin:0 0 14px;font-size:1.05rem;font-weight:400;letter-spacing:-.01em}
@@ -70,14 +115,14 @@ tbody tr:hover td{background:var(--cream)}
 .btn:active{transform:translateY(1px)}
 .btn::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg);transition:left .55s ease}
 .btn:hover::after{left:140%}
-.btn.ic{padding:8px;line-height:0;display:inline-flex;align-items:center;justify-content:center;overflow:visible}
+.btn.ic{padding:8px;line-height:0;display:inline-flex;align-items:center;justify-content:center;overflow:visible;min-width:32px;min-height:32px}
 .btn.ic::after{display:none}
-.btn:focus-visible{outline:none;box-shadow:0 0 0 3px var(--soft)}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--soft)}
 .btn.sec{background:var(--surface);color:var(--text);border:1px solid var(--line);box-shadow:none}
 .btn.sec:hover{background:var(--cream);border-color:var(--btn-sec,var(--accent));color:var(--btn-sec,var(--accent))}
 .btn.danger{background:var(--bad)}
 .btn.danger:hover{background:#b91c1c}
-.btn-sm{padding:4px 10px;font-size:.72rem}
+.btn-sm{padding:4px 10px;font-size:.72rem;min-height:24px} /* A11Y-09: alvo mínimo WCAG 2.5.8 */
 
 /* ===== Formulário ===== */
 /* min-width:0 evita o "chao invisivel" do flexbox: sem isso, um input/select dentro de uma
@@ -85,7 +130,8 @@ tbody tr:hover td{background:var(--cream)}
    do navegador mesmo com max-width definido, e o wrap vira imprevisivel dependendo de fonte/
    largura de janela em vez de obedecer ao CSS. */
 input,select,textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-md);font-size:.86rem;font-family:inherit;background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 label{font-size:.75rem;color:var(--gray);display:block;margin:10px 0 5px;font-weight:500}
 
 /* ===== Badge / pill ===== */
@@ -109,7 +155,8 @@ body.dark .b-blue{background:rgba(56,132,190,.18);color:#7dc3f0}
 .modal .box{background:var(--surface);border-radius:var(--radius-xl);max-width:620px;width:100%;max-height:92vh;overflow:auto;box-shadow:var(--shadow-xl)}
 .modal .hd{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);font-weight:400;font-size:1.1rem}
 .modal .bd{padding:18px}
-.x{cursor:pointer;color:#aaa;font-size:1.2rem;border:none;background:none;transition:color .15s}
+/* A11Y-23: era color:#aaa (~2,3:1 sobre branco). --gray fica >= 4,5:1. Alvo mínimo 32px. */
+.x{cursor:pointer;color:var(--gray);font-size:1.2rem;border:none;background:none;transition:color .15s;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)}
 .x:hover{color:var(--accent)}
 @media(max-width:640px){
   .modal{padding:0;align-items:flex-end}
@@ -223,8 +270,11 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
 .login input:focus, #loginModal .login input:focus {
   border-color: var(--accent) !important;
   background: #ffffff !important;
-  box-shadow: 0 0 0 4px rgba(140, 3, 39, .07) !important;
-  outline: none !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent) !important;
+}
+.login input:focus-visible, #loginModal .login input:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 1px !important;
 }
 
 .login .go, #loginModal .login .go {
