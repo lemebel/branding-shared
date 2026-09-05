@@ -42,6 +42,7 @@
 
 /* ===== Reset e base ===== */
 *{box-sizing:border-box}
+::selection{background:#dbe7e9}   /* M1: fallback sólido p/ navegador sem color-mix() */
 ::selection{background:color-mix(in srgb,var(--accent) 18%,transparent)}
 
 /* ===== Acessibilidade — foco visível único da plataforma (A11Y-02, auditoria 03/09/2026) =====
@@ -105,6 +106,20 @@ td{padding:11px 10px;border-bottom:1px solid var(--line);font-variant-numeric:ta
 tbody tr{transition:background .12s}
 tbody tr:hover td{background:var(--cream)}
 
+/* ===== Tabela responsiva (A3 — auditoria de compatibilidade, 05/09/2026) =====
+   Opt-in: adicionar class="tbl-cards" no <table>. Abaixo de 720px cada linha vira
+   um cartão "rótulo: valor". O rótulo sai de data-label no <td> (preencher na
+   geração da linha); sem data-label a célula ainda empilha, só sem o rótulo.
+   Enquanto a class não for adicionada, este bloco é inerte — nada muda. */
+@media (max-width:720px){
+  table.tbl-cards thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  table.tbl-cards tr{display:block;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--surface);padding:4px 12px}
+  table.tbl-cards td{display:flex;gap:12px;justify-content:space-between;align-items:baseline;padding:8px 0;border:none;border-bottom:1px solid var(--line);text-align:right;white-space:normal}
+  table.tbl-cards tr td:last-child{border-bottom:none}
+  table.tbl-cards td::before{content:attr(data-label);font-weight:600;color:var(--gray);text-transform:uppercase;font-size:.62rem;letter-spacing:.4px;text-align:left;flex:0 0 42%}
+  table.tbl-cards td[data-label=""]::before,table.tbl-cards td:not([data-label])::before{content:none}
+}
+
 /* ===== Botão ===== */
 /* --btn/--btn-hover/--on-btn (botao "preenchido") e --btn-sec (acento do botao
    "contorno") caem em --accent/--accent2/--on-accent por padrao via fallback do
@@ -152,6 +167,8 @@ body.dark .b-blue{background:rgba(56,132,190,.18);color:#7dc3f0}
 
 /* ===== Modal ===== */
 .modal{position:fixed;inset:0;background:rgba(15,20,22,.5);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10000}
+/* B2: sem backdrop-filter (Firefox < 103, "reduzir transparência" do SO) o desfoque some — escurece o overlay p/ manter o contraste do texto atrás */
+@supports not (backdrop-filter:blur(1px)){.modal{background:rgba(15,20,22,.72)}}
 .modal .box{background:var(--surface);border-radius:var(--radius-xl);max-width:620px;width:100%;max-height:92vh;overflow:auto;box-shadow:var(--shadow-xl)}
 .modal .hd{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);font-weight:400;font-size:1.1rem}
 .modal .bd{padding:18px}
@@ -167,6 +184,8 @@ body.dark .b-blue{background:rgba(56,132,190,.18);color:#7dc3f0}
 .toast{position:fixed;top:18px;right:18px;color:#fff;padding:13px 20px;border-radius:12px;font-weight:600;z-index:10050;box-shadow:0 10px 34px rgba(0,0,0,.18);animation:toastIn .3s cubic-bezier(.22,.61,.36,1)}
 
 /* ===== Scrollbar ===== */
+/* B1: Firefox ignora ::-webkit-scrollbar — sem isto ele mostra a barra larga do SO sobre o conteúdo */
+html{scrollbar-width:thin;scrollbar-color:#B4C6C9 var(--bg)}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:#CBD9DB;border-radius:8px;border:2px solid var(--bg)}
 ::-webkit-scrollbar-thumb:hover{background:#B4C6C9}
@@ -197,12 +216,14 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   inset: 0 !important;
   min-height: 100vh !important;
   height: 100vh !important;
+  height: 100dvh !important;   /* A1: viewport dinâmico no mobile (fallback 100vh acima) */
   width: 100vw !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 20px !important;
   overflow: hidden !important;
+  background: #F9F7F2 !important;   /* M1: fallback sólido — se color-mix() não existir, a linha abaixo é ignorada e sobra este */
   background: radial-gradient(1100px 640px at 15% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%), radial-gradient(900px 600px at 110% 110%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%), #F9F7F2 !important;
   z-index: 999999 !important;
   box-sizing: border-box !important;
