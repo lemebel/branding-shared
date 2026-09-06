@@ -152,7 +152,7 @@ label{font-size:.75rem;color:var(--gray);display:block;margin:10px 0 5px;font-we
 /* ===== Badge / pill ===== */
 .badge{padding:3px 9px;border-radius:7px;font-size:.7rem;font-weight:600;letter-spacing:.2px}
 .b-ok{background:#e8f6ec;color:#15803d}
-.b-warn{background:#fdf3d3;color:#9a6700}
+.b-warn{background:#fdf3d3;color:#8a5c00}
 .b-bad{background:#fce8e8;color:#b42121}
 .b-gray{background:#eef2f3;color:#5b6b70}
 .b-blue{background:#e5eef4;color:#2e5471}
