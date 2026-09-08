@@ -106,18 +106,25 @@ td{padding:11px 10px;border-bottom:1px solid var(--line);font-variant-numeric:ta
 tbody tr{transition:background .12s}
 tbody tr:hover td{background:var(--cream)}
 
-/* ===== Tabela responsiva (A3 — auditoria de compatibilidade, 05/09/2026) =====
-   Opt-in: adicionar class="tbl-cards" no <table>. Abaixo de 720px cada linha vira
-   um cartão "rótulo: valor". O rótulo sai de data-label no <td> (preencher na
-   geração da linha); sem data-label a célula ainda empilha, só sem o rótulo.
+/* ===== Tabela responsiva (A3 — auditoria de compatibilidade, 05-06/09/2026) =====
+   Opt-in: class="tbl-cards" no <table> (os apps ligam via helper de runtime
+   `_tblCards` — tabela de dados com cabeçalho e >=5 colunas). Abaixo de 720px
+   cada linha vira um cartão "rótulo: valor"; o rótulo sai de data-label no <td>,
+   preenchido pelo helper a partir do <th> da coluna. <td> sem data-label (ou "")
+   ainda empilha, só sem rótulo — é o caso das células de ação.
    Enquanto a class não for adicionada, este bloco é inerte — nada muda. */
 @media (max-width:720px){
   table.tbl-cards thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
   table.tbl-cards tr{display:block;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--surface);padding:4px 12px}
-  table.tbl-cards td{display:flex;gap:12px;justify-content:space-between;align-items:baseline;padding:8px 0;border:none;border-bottom:1px solid var(--line);text-align:right;white-space:normal}
+  /* !important vence os style="white-space:nowrap" inline das células de data/ação */
+  table.tbl-cards td{display:flex;gap:12px;justify-content:space-between;align-items:baseline;padding:8px 0;border:none;border-bottom:1px solid var(--line);text-align:right;white-space:normal!important;max-width:none!important}
   table.tbl-cards tr td:last-child{border-bottom:none}
   table.tbl-cards td::before{content:attr(data-label);font-weight:600;color:var(--gray);text-transform:uppercase;font-size:.62rem;letter-spacing:.4px;text-align:left;flex:0 0 42%}
   table.tbl-cards td[data-label=""]::before,table.tbl-cards td:not([data-label])::before{content:none}
+  /* célula de ação (sem rótulo): botões alinhados à direita, quebrando linha se preciso */
+  table.tbl-cards td[data-label=""],table.tbl-cards td:not([data-label]){justify-content:flex-end;flex-wrap:wrap}
+  /* linha de estado vazio ("Nenhum registro") ocupa o cartão inteiro, centralizada */
+  table.tbl-cards td[colspan]{justify-content:center;text-align:center}
 }
 
 /* ===== Botão ===== */
