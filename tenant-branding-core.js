@@ -33,6 +33,17 @@
 (function (global) {
   'use strict';
 
+  // Logo/ícone do tenant vêm do Supabase Storage (domínio externo) — reescreve pra
+  // passar pelo proxy + cache de borda da Cloudflare já em produção em
+  // app.lemebel.com.br/img/... (gestao/functions/img/[[path]].js, mesmo projeto
+  // Pages do login principal — reaproveitado aqui via origem cruzada em vez de
+  // duplicar a Function num 2º/3º projeto Pages). Sem isso, cada produto pagava
+  // DNS+TLS+conexão nova pro Supabase pra cada logo de tenant. Ver PR gestao#46/#48.
+  var SB_STORAGE_PREFIX = 'https://uiuhijwtubfxhumchbqx.supabase.co/storage/v1/object/public/';
+  function viaProxyImg(url) {
+    return (typeof url === 'string' && url.indexOf(SB_STORAGE_PREFIX) === 0) ? ('https://app.lemebel.com.br/img/' + url.slice(SB_STORAGE_PREFIX.length)) : url;
+  }
+
   function iniciar(config) {
     var PADRAO = config.padrao;
     var slug = detectarSlug();
@@ -55,8 +66,8 @@
     var base = marcaCache ? {
       nome: marcaCache.nome || PADRAO.nome,
       cores: marcaCache.cores,
-      logo: marcaCache.logo_url || PADRAO.logo,
-      icone: marcaCache.icone_url || marcaCache.logo_url || PADRAO.icone,
+      logo: viaProxyImg(marcaCache.logo_url) || PADRAO.logo,
+      icone: viaProxyImg(marcaCache.icone_url || marcaCache.logo_url) || PADRAO.icone,
       manifest: PADRAO.manifest,
       temaBarra: marcaCache.cores.dark || PADRAO.temaBarra
     } : PADRAO;
@@ -84,8 +95,8 @@
       var marca = {
         nome: e.nome || base.nome,
         cores: cores,
-        logo: e.logo_url || base.logo,
-        icone: e.icone_url || e.logo_url || base.icone,
+        logo: viaProxyImg(e.logo_url) || base.logo,
+        icone: viaProxyImg(e.icone_url || e.logo_url) || base.icone,
         manifest: base.manifest,
         temaBarra: (cores && cores.dark) || base.temaBarra
       };
