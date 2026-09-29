@@ -155,6 +155,12 @@ input,select,textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid 
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
 input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 label{font-size:.75rem;color:var(--gray);display:block;margin:10px 0 5px;font-weight:500}
+/* iOS Safari da zoom automatico ao focar campo com font-size<16px. .86rem (~13.7px)
+   dispara isso em qualquer <input>/<select>/<textarea> da plataforma. Sobe pra 16px
+   só no mobile (onde o zoom acontece) - decisão visual do desktop fica intacta. */
+@media(max-width:900px){
+  input,select,textarea{font-size:16px}
+}
 
 /* ===== Badge / pill ===== */
 .badge{padding:3px 9px;border-radius:7px;font-size:.7rem;font-weight:600;letter-spacing:.2px}
