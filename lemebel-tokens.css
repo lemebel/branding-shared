@@ -198,10 +198,13 @@ body.dark .b-blue{background:rgba(56,132,190,.18);color:#7dc3f0}
 
 /* ===== Scrollbar ===== */
 /* B1: Firefox ignora ::-webkit-scrollbar — sem isto ele mostra a barra larga do SO sobre o conteúdo */
-html{scrollbar-width:thin;scrollbar-color:#B4C6C9 var(--bg)}
+/* Chromium: ::-webkit-scrollbar (scrollbar-width/color padrão desligaria o estilo e traria as setinhas) */
+@supports not selector(::-webkit-scrollbar){html{scrollbar-width:thin;scrollbar-color:#B4C6C9 transparent}}
 ::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:#CBD9DB;border-radius:8px;border:2px solid var(--bg)}
-::-webkit-scrollbar-thumb:hover{background:#B4C6C9}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
+::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
+::-webkit-scrollbar-thumb{background:#CBD9DB;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#B4C6C9;background-clip:content-box}
 
 /* ===== Spinner / indicador "ao vivo" ===== */
 .spinner{width:26px;height:26px;border:2.5px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:18px auto}
