@@ -413,6 +413,16 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   margin-left: 6px !important;
 }
 
+/* Mobile (<900px): `.login` é flex — sem direction:column o banner da marca (.brand) e o cartão (.box)
+   ficavam LADO A LADO e o banner virava um quadradinho ao lado do formulário (achado do dono 07/10/2026).
+   Empilha: banner compacto em cima, cartão embaixo; rola se a tela for baixa. */
+@media(max-width:899px){
+  .login, #loginModal, #loginModal .login { flex-direction: column !important; overflow-y: auto !important; justify-content: safe center !important; }
+  .login .brand, #loginModal .login .brand { width: 100% !important; max-width: 390px !important; flex: 0 0 auto !important; padding: 18px 18px 14px !important; margin-bottom: 16px !important; }
+  .login .box, #loginModal .login .box { flex: 0 0 auto !important; }
+  .login .brand img, #loginModal .login .brand img { width: auto !important; max-width: 70% !important; max-height: 84px !important; }
+  .login .brand svg, #loginModal .login .brand svg { width: 84px !important; height: 84px !important; }
+}
 @media(min-width:900px){
   .login, #loginModal, #loginModal .login {
     display: block !important;
