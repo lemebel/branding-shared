@@ -628,3 +628,33 @@ html .login .box > .orb-selo { animation: lgIn .5s cubic-bezier(.22,.61,.36,1) .
 @media (prefers-reduced-motion: reduce) {
   html .login .box > form, html .login .box > #loginPanel, html .login .box > #signupPanel, html .login .box > .lnk, html .login .box > .orb-selo { animation: none !important; }
 }
+
+/* ===== Tela de abertura (boot-cover) — mesmo split do login; markup/JS em lemebel-splash.js =====
+   Identidade: AGENTS.md §1-3 (símbolo vazado, Space Grotesk no wordmark). Mensagens em Inter (fonte do sistema).
+   Prefixo `html` vence as regras antigas de spinner que cada app ainda tenha no <style> local. */
+html #boot-cover { position: fixed; inset: 0; z-index: 2147483647; background: var(--surface, #fff); color: var(--text, #1b1310); display: flex; flex-direction: row; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; transition: opacity .25s ease; }
+html #boot-cover.boot-gone { opacity: 0; pointer-events: none; }
+html #boot-cover .bc-l { width: 45%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; padding: 24px; }
+html #boot-cover .bc-r { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; text-align: center; }
+html #boot-cover .bc-logo { width: 320px; max-width: 84%; height: auto; max-height: 240px; object-fit: contain; display: none; animation: bcreveal .9s cubic-bezier(.65,0,.2,1) both; }
+html #boot-cover .bc-svg { width: auto; max-width: 84%; }
+html #boot-cover .bc-nome { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -.02em; display: none; text-align: center; animation: bcreveal .9s cubic-bezier(.65,0,.2,1) both; }
+html #boot-cover .bc-bar { width: 140px; height: 3px; border-radius: 99px; background: color-mix(in srgb, var(--accent) 16%, transparent); overflow: hidden; }
+html #boot-cover .bc-bar i { display: block; height: 100%; width: 40%; border-radius: 99px; background: var(--accent); animation: bcbar 1.3s cubic-bezier(.45,0,.25,1) infinite; }
+html #boot-cover .bc-msg { font-size: .9rem; font-weight: 500; color: var(--gray, #6b6b72); line-height: 1.5; min-height: 1.4em; max-width: 300px; opacity: 0; transition: opacity .35s; }
+html #boot-cover .bc-msg.on { opacity: 1; }
+html #boot-cover .bc-reload { display: none; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: 600; font-size: .82rem; padding: 8px 16px; border-radius: 13px; cursor: pointer; font-family: inherit; }
+html #boot-cover .bc-foot { position: absolute; left: 45%; right: 0; bottom: max(28px, env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--accent); animation: bcfade .8s ease .6s both; }
+html #boot-cover .bc-foot svg { width: 32px; height: 32px; display: block; flex-shrink: 0; }
+html #boot-cover .lsb-wm { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 1.05rem; letter-spacing: .11em; text-transform: uppercase; line-height: 1; }
+html #boot-cover .lsb-product { font-weight: 600; letter-spacing: .09em; text-transform: uppercase; opacity: .55; margin-left: 6px; }
+@media (max-width: 899px) {
+  html #boot-cover { flex-direction: column; }
+  html #boot-cover .bc-l { width: 100%; height: 40%; flex: none; }
+  html #boot-cover .bc-logo { width: 260px; max-height: 160px; }
+  html #boot-cover .bc-foot { left: 0; }
+}
+@keyframes bcbar { 0% { transform: translateX(-110%); } 100% { transform: translateX(320%); } }
+@keyframes bcreveal { from { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateY(8px); } to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; } }
+@keyframes bcfade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { html #boot-cover .bc-logo, html #boot-cover .bc-nome, html #boot-cover .bc-foot { animation: none; } html #boot-cover .bc-bar i { animation: none; width: 100%; opacity: .5; } }
