@@ -580,3 +580,51 @@ body::after{content:'';position:fixed;bottom:-26%;left:-12%;width:52vw;height:52
   padding-bottom:0;
 }
 
+/* ===== Login — acabamento moderno (layout A: mesmo split 45/55, só aparência) =====
+   Prefixo `html ` sobe a especificidade para valer também sobre cópias locais do bloco acima
+   (Gestão e outros apps repetem parte dele no <style> próprio). Nenhuma dimensão/posição muda. */
+html .login .brand, html #loginModal .login .brand {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 90%, #fff) 0%, var(--accent) 48%, color-mix(in srgb, var(--accent) 86%, #000) 100%) !important;
+}
+html .login label, html #loginModal .login label {
+  font-size: .78rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .01em !important;
+  color: #5E5247 !important;
+}
+html .login input, html #loginModal .login input {
+  background: #ffffff !important;
+  border: 1.5px solid #E6DED2 !important;
+  transition: border-color .15s, box-shadow .15s !important;
+}
+html .login input:hover, html #loginModal .login input:hover { border-color: #D3C6B5 !important; }
+html .login input:focus, html #loginModal .login input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent) !important;
+}
+html .login .go, html #loginModal .login .go {
+  background: var(--accent) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 30%, transparent) !important;
+  letter-spacing: .01em !important;
+  transition: transform .12s, box-shadow .2s, filter .2s !important;
+}
+html .login .go:hover, html #loginModal .login .go:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.07) !important;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 36%, transparent) !important;
+}
+html .login .go:active, html #loginModal .login .go:active { transform: translateY(0) !important; box-shadow: 0 3px 8px color-mix(in srgb, var(--accent) 28%, transparent) !important; }
+html .login .lnk:hover, html #loginModal .login .lnk:hover { text-decoration: underline !important; text-underline-offset: 3px !important; }
+html .login .err, html #loginModal .login .err {
+  background: #FEF2F2 !important;
+  border: 1px solid #FECACA !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+}
+@keyframes lgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+html .login .box > form, html .login .box > #loginPanel, html .login .box > #signupPanel { animation: lgIn .5s cubic-bezier(.22,.61,.36,1) both; }
+html .login .box > .lnk { animation: lgIn .5s cubic-bezier(.22,.61,.36,1) .08s both; }
+html .login .box > .orb-selo { animation: lgIn .5s cubic-bezier(.22,.61,.36,1) .16s both; }
+@media (prefers-reduced-motion: reduce) {
+  html .login .box > form, html .login .box > #loginPanel, html .login .box > #signupPanel, html .login .box > .lnk, html .login .box > .orb-selo { animation: none !important; }
+}
