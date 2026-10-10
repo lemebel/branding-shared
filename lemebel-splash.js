@@ -6,12 +6,13 @@
  * Uso: <div id="boot-cover" data-produto="Gestão"></div>
  *      <script src=".../lemebel-splash.js"></script>   (logo depois do div; precisa de lemebel-marca-core.js antes)
  *   data-lemebel="1" -> painel da plataforma: usa a marca Lemebel no lugar da logo de tenant.
+ * Reexibir depois do load: window.LemebelSplash.mostrar({ produto: 'Painel', lemebel: true }).
  * O CSS (#boot-cover) vem de lemebel-tokens.css. Quem esconde a tela e o app (esconderBootCover).
  */
 (function () {
   'use strict';
-  var c = document.getElementById('boot-cover');
-  if (!c) return;
+  function montar(c) {
+  try { clearTimeout(window._bcT1); clearInterval(window._bcT2); clearTimeout(window._bcT3); } catch (e) {}
   var M = window.LemebelMarca;
   var E = window.EMPRESA || {};
   var produto = (c.getAttribute('data-produto') || '').toUpperCase().replace(/[<>&]/g, '');
@@ -65,4 +66,22 @@
     m.textContent = 'Está demorando mais que o normal. Você pode aguardar mais um pouco ou recarregar a página.';
     r.style.display = 'inline-block';
   }, 40000);
+  }
+
+  var c0 = document.getElementById('boot-cover');
+  if (c0) montar(c0);
+
+  // Reexibe a abertura depois do load (ex.: painel, enquanto busca os dados logo após o login).
+  // Se já houver um #boot-cover na tela, não faz nada. Quem esconde é o app (esconderBootCover).
+  window.LemebelSplash = {
+    mostrar: function (opts) {
+      if (document.getElementById('boot-cover')) return;
+      var c = document.createElement('div');
+      c.id = 'boot-cover';
+      if (opts && opts.produto) c.setAttribute('data-produto', opts.produto);
+      if (opts && opts.lemebel) c.setAttribute('data-lemebel', '1');
+      document.body.appendChild(c);
+      montar(c);
+    }
+  };
 })();
