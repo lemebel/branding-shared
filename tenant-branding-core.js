@@ -46,6 +46,9 @@
 
   function iniciar(config) {
     var PADRAO = config.padrao;
+    // Definido ANTES do 1o buscarNoBanco(): 'var' sobe sem valor, e a busca abaixo rodava com ERP_API undefined
+    // ('undefined/api/v1/tenant-config'), então a marca real do tenant nunca era buscada (só a do cache).
+    var ERP_API = 'https://erp-api-qouq.onrender.com';
     var slug = detectarSlug();
 
     // Marca real da ÚLTIMA visita, cacheada por slug no navegador. Pinta a marca
@@ -177,7 +180,6 @@
     // ver PENDENCIAS.md): nenhum código client-side fala mais direto com supabase.co.
     // Se a erp-api estiver fora do ar, o branding fica na identidade oficial da
     // vertente (paleta padrão) — degradação aceitável, sem tela quebrada.
-    var ERP_API = 'https://erp-api-qouq.onrender.com';
     // Achado 27/08/2026 (relato de cliente na Gestão, mesma causa aqui): o erp-api
     // no Render hiberna e leva 30-50s pra acordar depois de ficar ocioso. Sem
     // timeout nem retentativa, uma janela ociosa faz essa busca falhar (ou demorar
