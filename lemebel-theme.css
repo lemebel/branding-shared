@@ -39,3 +39,11 @@
 :root[data-theme="dark"] .modal .box, :root[data-theme="dark"] .card.elev { background: color-mix(in srgb, var(--surface) 88%, #fff); }
 :root[data-theme="dark"] ::selection { background: color-mix(in srgb, var(--accent-text) 38%, transparent); }
 :root[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #3a4452; border-color: var(--bg); }
+
+/* Tela de login: o lemebel-tokens.css cravou cores com !important (cartão #fff, rótulo #5E5247, campo #fff). No escuro precisam
+ * de regra com !important e especificidade maior. Só entra com data-theme="dark". */
+:root[data-theme="dark"] .login .box, :root[data-theme="dark"] #loginModal .login .box { background: var(--surface) !important; }
+:root[data-theme="dark"] .login label, :root[data-theme="dark"] #loginModal .login label { color: var(--gray) !important; }
+:root[data-theme="dark"] .login input, :root[data-theme="dark"] #loginModal .login input { background: var(--input-bg, var(--cream)) !important; border-color: var(--line) !important; color: var(--text) !important; }
+:root[data-theme="dark"] .login input:hover, :root[data-theme="dark"] #loginModal .login input:hover { border-color: color-mix(in srgb, var(--line) 55%, var(--gray)) !important; }
+:root[data-theme="dark"] .login input:focus, :root[data-theme="dark"] #loginModal .login input:focus { background: var(--surface) !important; border-color: var(--accent-text) !important; }
