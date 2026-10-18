@@ -70,6 +70,7 @@
       nome: marcaCache.nome || PADRAO.nome,
       cores: marcaCache.cores,
       logo: viaProxyImg(marcaCache.logo_url) || PADRAO.logo,
+      logoEscuro: viaProxyImg(marcaCache.logo_url_escuro) || null,
       icone: viaProxyImg(marcaCache.icone_url || marcaCache.logo_url) || PADRAO.icone,
       manifest: PADRAO.manifest,
       temaBarra: marcaCache.cores.dark || PADRAO.temaBarra
@@ -99,6 +100,7 @@
         nome: e.nome || base.nome,
         cores: cores,
         logo: viaProxyImg(e.logo_url) || base.logo,
+        logoEscuro: viaProxyImg(e.logo_url_escuro) || null,
         icone: viaProxyImg(e.icone_url || e.logo_url) || base.icone,
         manifest: base.manifest,
         temaBarra: (cores && cores.dark) || base.temaBarra
@@ -111,7 +113,7 @@
         try {
           localStorage.setItem(MARCA_CACHE_KEY, JSON.stringify({
             nome: e.nome || null, cores: e.cores,
-            logo_url: e.logo_url || null, icone_url: e.icone_url || null
+            logo_url: e.logo_url || null, logo_url_escuro: e.logo_url_escuro || null, icone_url: e.icone_url || null
           }));
         } catch (_e) {}
       }
@@ -204,7 +206,7 @@
       }).then(function (res) {
         if (res && res.ok && res.tenant && res.tenant.id && res.tenant.slug === s) {
           var t = res.tenant;
-          return { id: t.id, slug: t.slug, nome: t.nome, cores: t.branding.cores, logo_url: t.branding.logo_url, icone_url: t.branding.icone_url, bloqueado: !!t.bloqueado };
+          return { id: t.id, slug: t.slug, nome: t.nome, cores: t.branding.cores, logo_url: t.branding.logo_url, logo_url_escuro: t.branding.logo_url_escuro, icone_url: t.branding.icone_url, bloqueado: !!t.bloqueado };
         }
         return null;
       }).catch(function () { return null; });
@@ -225,7 +227,7 @@
       definirLink('icon', m.icone);
       definirLink('apple-touch-icon', m.icone);
       definirManifest(m);
-      trocarLogos(m.logo, m.logo === PADRAO.logo);
+      trocarLogos(m.logo, m.logo === PADRAO.logo, m.logoEscuro);
     }
 
     function definirManifest(m) {
@@ -257,16 +259,28 @@
       } catch (e) { definirLink('manifest', 'manifest.json'); }
     }
 
-    var logoAtual = null, agendado = false, observando = false;
-    function trocarLogos(logo, ehPadrao) {
-      logoAtual = logo;
+    // Logo do tenant. Com tema escuro (lemebel-theme.js): usa a logo escura do tenant se houver; senão a clara numa "placa"
+    // clara (data-logo-placa, estilizada em lemebel-theme.css). As <img> trocadas ganham data-lemebel-logo pra poder
+    // re-trocar quando o tema muda (o src delas deixa de casar com logoPattern depois da 1ª troca).
+    var logoAtual = null, logoEscuro = null, agendado = false, observando = false;
+    function escolherLogo() {
+      var escuro = document.documentElement.getAttribute('data-theme') === 'dark';
+      return { src: (escuro && logoEscuro) ? logoEscuro : logoAtual, placa: escuro && !logoEscuro };
+    }
+    function trocarLogos(logo, ehPadrao, escuro) {
+      logoAtual = logo; logoEscuro = escuro || null;
       if (!logo || ehPadrao) return;
       var trocar = function () {
         agendado = false;
+        var l = escolherLogo();
         var imgs = document.querySelectorAll('img');
         for (var i = 0; i < imgs.length; i++) {
           var src = imgs[i].getAttribute('src') || '';
-          if (config.logoPattern.test(src)) imgs[i].src = logoAtual;
+          if (imgs[i].hasAttribute('data-lemebel-logo') || config.logoPattern.test(src)) {
+            imgs[i].setAttribute('data-lemebel-logo', '1');
+            if (imgs[i].getAttribute('src') !== l.src) imgs[i].src = l.src;
+            if (l.placa) imgs[i].setAttribute('data-logo-placa', '1'); else imgs[i].removeAttribute('data-logo-placa');
+          }
         }
       };
       var agendar = function () {
@@ -278,6 +292,7 @@
       if (!observando) {
         observando = true;
         document.addEventListener('DOMContentLoaded', agendar);
+        document.addEventListener('lemebel:theme', agendar);
         new MutationObserver(agendar).observe(document.documentElement, { childList: true, subtree: true });
       }
     }
