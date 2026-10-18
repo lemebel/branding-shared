@@ -7,8 +7,8 @@
  *  - Preferência do usuário: 'auto' (padrão: segue o sistema do aparelho), 'light' ou 'dark'. Guardada em COOKIE
  *    `lem_theme` com Domain=.lemebel.com.br (vale em todos os produtos; não é segredo) + localStorage como reserva.
  *  - Aplica <html data-theme="light|dark"> + color-scheme ANTES da primeira pintura (sem "flash" claro).
- *  - Deriva --accent-text: a cor de MARCA do tenant usada como TEXTO/borda/link sobre a superfície, ajustada até 4,5:1
- *    (clareia no escuro, escurece no claro). --accent continua sendo o PREENCHIMENTO (botões, com --on-accent por cima).
+ *  - Deriva --accent-text: a cor de MARCA do tenant usada como TEXTO/borda/link sobre a superfície, ajustada até 5,5:1
+ *    (clareia no escuro, escurece no claro; alvo 5,5:1). --accent continua sendo o PREENCHIMENTO (botões, com --on-accent por cima).
  *    Os dois papéis do --accent não cabem num valor só no escuro — ver _docs/dark-mode/ESTUDO_MODO_ESCURO.md.
  *  - Evento `lemebel:theme` (detail: {pref, tema}) para gráficos/JS que leem variáveis CSS refazerem as cores.
  *  - Impressão sempre em claro (beforeprint/afterprint).
@@ -22,7 +22,7 @@
 
   var COOKIE = 'lem_theme', LS = 'lem_theme', root = document.documentElement;
   var VALIDOS = { auto: 1, light: 1, dark: 1 };
-  var pref = 'auto', ultimaChave = '', imprimindo = null;
+  var pref = 'auto', ultimaChave = '', imprimindo = null, ALVO = 5.5;
 
   function lerCookie() {
     try {
@@ -68,13 +68,14 @@
   function mistura(a, b, t) { return [0, 1, 2].map(function (i) { return Math.round(a[i] * (1 - t) + b[i] * t); }); }
   function hex(c) { return '#' + c.map(function (v) { return ('0' + Math.max(0, Math.min(255, v)).toString(16)).slice(-2); }).join(''); }
 
-  /* Cor de marca como TEXTO sobre `fundo`: mantém se já passa; senão caminha para branco (escuro) ou preto (claro) até 4,5:1. */
+  /* Cor de marca como TEXTO sobre `fundo`: mantém se já passa; senão caminha para branco (escuro) ou preto (claro).
+   Alvo 5,5:1 (não 4,5): texto de marca também aparece sobre tintas da própria marca (--soft), que reduzem o contraste. */
   function corDeTexto(accent, fundo, escuro) {
-    if (razao(accent, fundo) >= 4.5) return hex(accent);
+    if (razao(accent, fundo) >= ALVO) return hex(accent);
     var alvo = escuro ? [255, 255, 255] : [0, 0, 0];
     for (var t = 0.05; t <= 1.0001; t += 0.05) {
       var c = mistura(accent, alvo, t);
-      if (razao(c, fundo) >= 4.5) return hex(c);
+      if (razao(c, fundo) >= ALVO) return hex(c);
     }
     return hex(alvo);
   }

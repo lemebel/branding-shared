@@ -19,6 +19,10 @@
   --ok: #4ade80;
   --warn: #fbbf24;
   --bad: #f87171;
+  /* texto sobre preenchimento de status (botão/ícone verde, vermelho, âmbar): escuro, pois o preenchimento é claro no tema escuro */
+  --on-ok: #052e16;
+  --on-warn: #2a1a00;
+  --on-bad: #2b0707;
   --shadow: 0 1px 2px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.35);
   --shadow-xs: 0 1px 2px rgba(0,0,0,.45);
   --shadow-sm: 0 1px 2px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.3);
