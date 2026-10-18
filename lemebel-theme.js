@@ -81,7 +81,9 @@
   }
   function derivar() {
     try {
-      var cs = getComputedStyle(root);
+      // Lê do <body> quando existe: um produto pode sobrescrever --surface/--bg no body (Gestão: a paleta do tenant é gravada inline
+      // no <html> e só uma regra no body a vence no escuro). Sem body ainda (script no <head>), cai pro <html>.
+      var cs = getComputedStyle(document.body || root);
       var accent = rgb(cs.getPropertyValue('--accent')), surface = rgb(cs.getPropertyValue('--surface'));
       if (!accent || !surface) return;
       var escuro = root.getAttribute('data-theme') === 'dark';
