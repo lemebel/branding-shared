@@ -1,0 +1,37 @@
+/* Tema escuro da plataforma Lemebel — complemento do lemebel-tokens.css (carregar DEPOIS dele e antes do CSS do produto).
+ * Só entra em ação com <html data-theme="dark"> (definido por lemebel-theme.js). No claro não muda nada: o produto continua com a
+ * paleta dele. Contrato: o produto usa APENAS tokens (var(--…)) — nunca hex. Papéis da cor de marca:
+ *   --accent       preenchimento (botão, barra) — texto por cima: --on-accent
+ *   --accent-text  a marca usada como TEXTO/link/borda sobre a superfície (derivada em runtime, >= 4,5:1)
+ * Neutros escuros abaixo são o padrão da plataforma; um produto pode refiná-los no próprio CSS com `:root[data-theme="dark"]{…}`. */
+:root { --accent-text: var(--accent); }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #12151a;
+  --surface: #1a1f26;
+  --cream: #222933;
+  --text: #e8edf3;
+  --gray: #a3afbd;
+  --medium: #a3afbd;
+  --line: #2a323d;
+  --soft: color-mix(in srgb, var(--accent) 22%, transparent);
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --bad: #f87171;
+  --shadow: 0 1px 2px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.35);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.45);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.5);
+  --shadow-lg: 0 10px 28px -12px rgba(0,0,0,.7);
+  --shadow-xl: 0 30px 60px -24px rgba(0,0,0,.8);
+}
+:root[data-theme="light"] { color-scheme: light; }
+
+/* Logo do tenant sem versão escura: placa clara por trás (logo escura some no fundo escuro). Marcada por tenant-branding-core. */
+:root[data-theme="dark"] img[data-logo-placa] { background: #fff; padding: 6px 10px; border-radius: 10px; box-sizing: content-box; }
+
+/* Elevação no escuro: mais alto = superfície mais clara (sombra some no fundo escuro). */
+:root[data-theme="dark"] .modal .box, :root[data-theme="dark"] .card.elev { background: color-mix(in srgb, var(--surface) 88%, #fff); }
+:root[data-theme="dark"] ::selection { background: color-mix(in srgb, var(--accent-text) 38%, transparent); }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #3a4452; border-color: var(--bg); }
