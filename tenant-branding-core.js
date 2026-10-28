@@ -227,10 +227,15 @@
       definirLink('icon', m.icone);
       definirLink('apple-touch-icon', m.icone);
       definirManifest(m);
+      window.__marcaIconeAtual = m.icone;
+      aplicarIconesQuadrados(m);
       trocarLogos(m.logo, m.logo === PADRAO.logo, m.logoEscuro);
     }
 
-    function definirManifest(m) {
+    // Cache dos ícones quadrados (declarado antes de qualquer aplicar(): 'var' sobe sem valor).
+    var _icCache = {};
+
+    function definirManifest(m, ic) {
       if (!slug || !m || !m.nome) { definirLink('manifest', (m && m.manifest) || 'manifest.json'); return; }
       try {
         var icone = m.icone || PADRAO.icone;
@@ -249,15 +254,83 @@
           background_color: cores.dark || m.temaBarra || PADRAO.temaBarra,
           theme_color: m.temaBarra || cores.accent || PADRAO.cores.accent,
           lang: 'pt-BR',
-          icons: [
+          // Com ícone quadrado gerado: 'any' e 'maskable' separados, cada um com a folga certa (logo larga saía
+          // cortada/com zoom no launcher do Android). Sem ele, só 'any' — nunca 'maskable' com a logo crua.
+          icons: ic ? [
+            { src: ic.any192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+            { src: ic.any512, sizes: '512x512', type: 'image/png', purpose: 'any' },
+            { src: ic.mask512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          ] : [
             { src: iconeAbs, sizes: '192x192', type: tipo, purpose: 'any' },
-            { src: iconeAbs, sizes: '512x512', type: tipo, purpose: 'any maskable' }
+            { src: iconeAbs, sizes: '512x512', type: tipo, purpose: 'any' }
           ]
         };
         var blob = new Blob([JSON.stringify(manifesto)], { type: 'application/manifest+json' });
         definirLink('manifest', URL.createObjectURL(blob));
       } catch (e) { definirLink('manifest', 'manifest.json'); }
     }
+
+    // Ícone do app / favicon SEMPRE quadrado e sem corte: a logo do cliente pode ter qualquer proporção
+    // (larga, alta, com ou sem fundo). Mede a imagem, centraliza SEM esticar e SEM zoom, com margem:
+    //  - "any" (aba do navegador, tela inicial do iOS, atalho): logo ocupa ~84% do quadrado;
+    //  - "maskable" (Android recorta em círculo): logo cabe inteira dentro do círculo seguro (diagonal ≤ 72%).
+    // Fundo: a cor da borda da própria imagem quando ela já tem fundo; se for transparente, branco para logo
+    // escura e a cor da marca para logo clara (nunca logo clara sobre branco).
+    function iconesQuadrados(src, corMarca) {
+      var chave = src + '|' + (corMarca || '');
+      if (_icCache[chave]) return _icCache[chave];
+      return (_icCache[chave] = new Promise(function (resolve) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () { try { resolve(montarIcones(img, corMarca)); } catch (e) { resolve(null); } };
+        img.onerror = function () { resolve(null); };
+        img.src = src;
+      }));
+    }
+    function montarIcones(img, corMarca) {
+      var w = img.naturalWidth || img.width || 512, h = img.naturalHeight || img.height || 512;
+      // fundo: amostra a imagem reduzida
+      var k = 64 / Math.max(w, h), sw = Math.max(1, Math.round(w * k)), sh = Math.max(1, Math.round(h * k));
+      var c0 = document.createElement('canvas'); c0.width = sw; c0.height = sh;
+      var x0 = c0.getContext('2d', { willReadFrequently: true }); x0.drawImage(img, 0, 0, sw, sh);
+      var d = x0.getImageData(0, 0, sw, sh).data;
+      function px(x, y) { var i = (y * sw + x) * 4; return [d[i], d[i + 1], d[i + 2], d[i + 3]]; }
+      var cantos = [px(0, 0), px(sw - 1, 0), px(0, sh - 1), px(sw - 1, sh - 1)];
+      var opacos = cantos.every(function (p) { return p[3] > 200; });
+      var fundo;
+      if (opacos) { fundo = 'rgb(' + cantos[0][0] + ',' + cantos[0][1] + ',' + cantos[0][2] + ')'; }
+      else {
+        var soma = 0, n = 0;
+        for (var i = 0; i < d.length; i += 4) { if (d[i + 3] > 40) { soma += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255; n++; } }
+        fundo = (n && soma / n > 0.72) ? (corMarca || '#3a2a22') : '#ffffff';
+      }
+      function desenhar(tam, escala) {
+        var c = document.createElement('canvas'); c.width = c.height = tam;
+        var x = c.getContext('2d');
+        x.fillStyle = fundo; x.fillRect(0, 0, tam, tam);
+        x.imageSmoothingQuality = 'high';
+        var s = escala(tam, w, h), dw = w * s, dh = h * s;
+        x.drawImage(img, (tam - dw) / 2, (tam - dh) / 2, dw, dh);
+        return c.toDataURL('image/png');
+      }
+      var cabeAny = function (t, a, b) { return Math.min((t * 0.84) / a, (t * 0.84) / b); };
+      var cabeMask = function (t, a, b) { return (t * 0.72) / Math.sqrt(a * a + b * b); };
+      return { any192: desenhar(192, cabeAny), any512: desenhar(512, cabeAny), mask512: desenhar(512, cabeMask) };
+    }
+    function aplicarIconesQuadrados(m) {
+      var origem = m && m.icone;
+      if (!origem || origem.slice(0, 5) === 'data:') return;
+      var abs = origem;
+      try { abs = new URL(origem, location.origin).href; } catch (e) {}
+      var cor = m.cores && (m.cores.accent || m.cores.dark) || m.temaBarra;
+      iconesQuadrados(abs, cor).then(function (ic) {
+        if (!ic || window.__marcaIconeAtual !== origem) return; // marca mudou enquanto carregava
+        definirLink('icon', ic.any192);
+        definirLink('apple-touch-icon', ic.any192);
+        definirManifest(m, ic);
+      });
+    }
+
 
     // Logo do tenant. Com tema escuro (lemebel-theme.js): usa a logo escura do tenant se houver; senão a clara numa "placa"
     // clara (data-logo-placa, estilizada em lemebel-theme.css). As <img> trocadas ganham data-lemebel-logo pra poder
