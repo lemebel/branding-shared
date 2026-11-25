@@ -48,7 +48,7 @@
     var PADRAO = config.padrao;
     // Definido ANTES do 1o buscarNoBanco(): 'var' sobe sem valor, e a busca abaixo rodava com ERP_API undefined
     // ('undefined/api/v1/tenant-config'), então a marca real do tenant nunca era buscada (só a do cache).
-    var ERP_API = 'https://erp-api-qouq.onrender.com';
+    var ERP_API = 'https://api.lemebel.com.br';
     var slug = detectarSlug();
 
     // Marca real da ÚLTIMA visita, cacheada por slug no navegador. Pinta a marca
